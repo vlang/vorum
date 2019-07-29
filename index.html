@@ -1,0 +1,27 @@
+@header
+
+<form action="/new">
+    <input type="submit" value="New Topic" style="margin-top:30px"> 
+</form>
+ 
+<br> 
+<br> 
+
+@for post in posts 
+	<div class=post>
+		<a class=topic href="@post.url">@post.title</a> 
+		<img class=comment-img> 
+		<span class=nr-comments>@post.nr_comments</span> 
+		<span class=time>@post.time</span>
+	</div>
+@end
+
+<br> 
+<br> 
+
+<center style="color:#777">Powered by <a target=_blank href="https://github.com/vlang/vtalk">vtalk</a>, 
+open-source blogging/forum software written in V</center>  
+
+<br> 
+<br> 
+
