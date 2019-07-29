@@ -8,6 +8,16 @@ Open-source blogging/forum software written in V.
 
 Lots of things are broken and not implemented yet in V, vweb, and vtalk.
 
+### Setting up the database
+
+Install Postgres and libpq, create a database (you can use any name), and run the initalization script:
+
+```
+psql -f init_postgres_db.sql -d vforum
+```
+
+Edit Postgres connection settings in `vtalk.v`.
+
 ### Building
 
 V 0.1.17 is required.
