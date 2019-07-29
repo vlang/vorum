@@ -35,9 +35,9 @@ fn (app mut App) oauth_cb() {
 		return
 	}
 	d := 'client_id=$CLIENT_ID&client_secret=$CLIENT_SECRET&code=$code'
-	resp := http.post('https://github.com/login/oauth/access_token', d)
+	resp := http.post('https://github.com/login/oauth/access_token', d) or { return } 
 	token := resp.find_between('access_token=', '&')
-	mut req := http.new_request('GET', 'https://api.github.com/user?access_token=$token', '')
+	mut req := http.new_request('GET', 'https://api.github.com/user?access_token=$token', '') or { return } 
 	req.add_header('User-Agent', 'V http client')
 	user_js := req.do()
 	gh_user := json.decode(GitHubUser, user_js.body) or {
