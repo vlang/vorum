@@ -4,9 +4,20 @@ Open-source blogging/forum software written in V.
 
 (The name is not final, name suggestions are welcome.)
 
-**This is pre-alpha software**
+**This is pre-alpha software.**
 
 Lots of things are broken and not implemented yet in V, vweb, and vtalk.
+
+### Building
+
+```bash
+git clone https://github.com/vlang/vtalk
+cd vtalk
+v .
+./vtalk
+
+Running vtalk on http://localhost:8092...
+```
 
 ### Known problems:
 
