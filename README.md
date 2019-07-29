@@ -10,6 +10,8 @@ Lots of things are broken and not implemented yet in V, vweb, and vtalk.
 
 ### Building
 
+V 0.1.17 is required.
+
 ```bash
 git clone https://github.com/vlang/vtalk
 cd vtalk
