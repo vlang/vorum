@@ -31,6 +31,7 @@ pub fn (app mut App) init() {
 
 pub fn (app mut App) index() {
 	posts := app.find_all_posts()
+	println(123) // TODO remove, won't work without it 
 	$vweb.html()
 }
 
