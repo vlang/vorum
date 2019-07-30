@@ -20,7 +20,7 @@ pub mut:
 }
 
 fn main() {
-	println('Running vtalk on http://localhost:$Port')
+	println('Running vorum on http://localhost:$Port')
 	vweb.run<App>(Port)
 }
 

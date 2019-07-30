@@ -24,8 +24,8 @@ from posts
 order by last_reply desc')
 	if rows.len == 0 {
 		app.cur_user.name = 'admin' 
-		app.insert_post('Hello world!', 'Hello world from vtalk ;)') 
-		return [Post{title:'Hello world!', text: 'Hello world from vtalk ;)'}]  
+		app.insert_post('Hello world!', 'Hello world from vorum ;)') 
+		return [Post{title:'Hello world!', text: 'Hello world from vorum ;)'}]  
 	}
 	mut posts := []Post
 	for row in rows {
