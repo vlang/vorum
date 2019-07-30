@@ -9,7 +9,9 @@ import (
 )
 
 const (
-	Port = 8092
+	port = 8092
+	db_name = 'vorum'
+	db_user = 'postgres' 
 )
 
 struct App {
@@ -20,12 +22,12 @@ pub mut:
 }
 
 fn main() {
-	println('Running vorum on http://localhost:$Port')
-	vweb.run<App>(Port)
+	println('Running vorum on http://localhost:$port')
+	vweb.run<App>(port)
 }
 
 pub fn (app mut App) init() {
-	app.db = pg.connect('blog', 'alex')
+	app.db = pg.connect(db_name, db_user) 
 	app.cur_user = User{} 
 }
 
