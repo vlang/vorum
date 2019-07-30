@@ -1,4 +1,4 @@
-# vtalk
+# vforum
 
 Open-source blogging/forum software written in V. 
 
@@ -6,7 +6,7 @@ Open-source blogging/forum software written in V.
 
 **This is pre-alpha software.**
 
-Lots of things are broken and not implemented yet in V, vweb, and vtalk.
+Lots of things are broken and not implemented yet in V, vweb, and vforum.
 
 ### Setting up the database
 
@@ -16,24 +16,24 @@ Install Postgres and libpq, create a database (you can use any name), and run th
 psql -f init_postgres_db.sql -d vforum
 ```
 
-Edit Postgres connection settings in `vtalk.v`.
+Edit Postgres connection settings in `vforum.v`.
 
 ### Building
 
 V 0.1.17 is required.
 
 ```bash
-git clone https://github.com/vlang/vtalk
-cd vtalk
+git clone https://github.com/vlang/vforum
+cd vforum
 v .
-./vtalk
+./vforum
 
-Running vtalk on http://localhost:8092...
+Running vforum on http://localhost:8092...
 ```
 
 ### Deploying
 
-Everything, including HTML templates, is in one binary file `vtalk`. That's all you need to deploy.
+Everything, including HTML templates, is in one binary file `vforum`. That's all you need to deploy.
 
 ### Known problems:
 
