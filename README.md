@@ -1,4 +1,4 @@
-# vforum
+# vorum
 
 Open-source blogging/forum software written in V. 
 
@@ -6,34 +6,34 @@ Open-source blogging/forum software written in V.
 
 **This is pre-alpha software.**
 
-Lots of things are broken and not implemented yet in V, vweb, and vforum.
+Lots of things are broken and not implemented yet in V, vweb, and vorum.
 
 ### Setting up the database
 
 Install Postgres and libpq, create a database (you can use any name), and run the initalization script:
 
 ```
-psql -f init_postgres_db.sql -d vforum
+psql -f init_postgres_db.sql -d vorum
 ```
 
-Edit Postgres connection settings in `vforum.v`.
+Edit Postgres connection settings in `vorum.v`.
 
 ### Building
 
 V 0.1.17 is required.
 
 ```bash
-git clone https://github.com/vlang/vforum
-cd vforum
+git clone https://github.com/vlang/vorum
+cd vorum
 v .
-./vforum
+./vorum
 
-Running vforum on http://localhost:8092...
+Running vorum on http://localhost:8092...
 ```
 
 ### Deploying
 
-Everything, including HTML templates, is in one binary file `vforum`. That's all you need to deploy.
+Everything, including HTML templates, is in one binary file `vorum`. That's all you need to deploy.
 
 ### Known problems:
 
