@@ -10,13 +10,13 @@ Lots of things are broken and not implemented yet in V, vweb, and vorum.
 
 ### Setting up the database
 
-Install Postgres and libpq, create a database (you can use any name), and run the initalization script:
+Install Postgres and libpq, create a database `vorum` (you can use any name), and run the initalization script:
 
 ```
 psql -f init_postgres_db.sql -d vorum
 ```
 
-Edit Postgres connection settings in `vorum.v`.
+Edit Postgres connection settings (Postgres user and db name) in `main.v`.
 
 ### Building
 
