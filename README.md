@@ -1,6 +1,6 @@
 # vorum
 
-Open-source blogging/forum software written in V. 
+Open-source blogging/forum software written in [V](https://github.com/vlang/v). 
 
 (The name is not final, name suggestions are welcome.)
 
@@ -33,7 +33,7 @@ Running vorum on http://localhost:8092...
 
 ### Deploying
 
-Everything, including HTML templates, is in one binary file `vorum`. That's all you need to deploy.
+Everything, including HTML templates, is in one binary ~100 KB file `vorum`. That's all you need to deploy.
 
 ### Known problems:
 
