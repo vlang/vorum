@@ -1,3 +1,4 @@
+//
 module main
 
 struct User {
