@@ -23,11 +23,12 @@ pub mut:
 
 fn main() {
 	println('Running vorum on http://localhost:$port')
-	vweb.run<App>(port)
+	mut app := App{}
+	vweb.run(mut app, port)
 }
 
 pub fn (app mut App) init() {
-	app.db = pg.connect(db_name, db_user) 
+	app.db = pg.connect(pg.Config{dbname:db_name, user:db_user})
 	app.cur_user = User{} 
 }
 
