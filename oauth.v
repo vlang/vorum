@@ -20,7 +20,7 @@ const (
 )
 
 fn random_string(len int) string {
-	mut buf := [byte(0); len]
+	mut buf := [byte(0)].repeat(len)
 	for i := 0; i < len; i++ {
 		idx := rand.next(RANDOM.len)
 		buf[i] = RANDOM[idx]
@@ -39,7 +39,7 @@ fn (app mut App) oauth_cb() {
 	token := resp.text.find_between('access_token=', '&')
 	mut req := http.new_request('GET', 'https://api.github.com/user?access_token=$token', '') or { return } 
 	req.add_header('User-Agent', 'V http client')
-	user_js := req.do()
+	user_js := req.do() or { return }
 	gh_user := json.decode(GitHubUser, user_js.text) or {
 		println('cant decode')
 		return
@@ -56,8 +56,9 @@ fn (app mut App) oauth_cb() {
 }
 
 fn (app mut App) auth() {
-	id := app.vweb.get_cookie('id').int()
-	random_id := app.vweb.get_cookie('q')
+	id_str := app.vweb.get_cookie('id') or { '0' }
+	id := id_str.int()
+	random_id := app.vweb.get_cookie('q') or { return }
 	if id != 0 {
 		cur_user := app.retrieve_user(id, random_id) or {
 			return

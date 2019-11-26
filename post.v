@@ -72,7 +72,7 @@ fn (app App) retrieve_post(id int) ?Post {
 	return post
 }
 
-fn (app mut App) insert_comment(post_id int, comment Comment) bool { 
+fn (app & App) insert_comment(post_id int, comment Comment) bool { 
 	app.db.exec_param2(' 
 insert into comments 
 (name, text, post_id) 
@@ -85,7 +85,7 @@ where id=$1', post_id.str())
 	return true // TODO vweb $ hack 
 } 
 
-fn (app mut App) insert_post(title, text string) bool { 
+fn (app & App) insert_post(title, text string) bool { 
 	app.db.exec_param2('insert into posts (title, text) values ($1,$2)', title, '') 
 	post_id := app.db.q_int('select id from posts order by id desc limit 1')
 	app.db.exec_param2('insert into comments (name, text, post_id) values ($1, $2, \'$post_id\') ',
