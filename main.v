@@ -11,7 +11,7 @@ import (
 const (
 	port = 8092
 	db_name = 'vorum'
-	db_user = 'postgres'
+	db_user = 'alex'
 )
 
 struct App {
@@ -28,7 +28,7 @@ fn main() {
 }
 
 pub fn (app mut App) init() {
-	app.db = pg.connect(pg.Config{dbname:db_name, user:db_user})
+	app.db = pg.connect(pg.Config{host:'127.0.0.1', dbname:db_name, user:db_user})
 	app.cur_user = User{}
 }
 
@@ -108,7 +108,7 @@ fn (app & App) comment() {
 
 // "/post/:id/:title"
 pub fn (app &App) get_post_id() int {
-	return app.vweb.req.url.substr(4, app.vweb.req.url.len).find_between('/', '/').int()
+	return app.vweb.req.url[4..app.vweb.req.url.len].find_between('/', '/').int()
 }
 
 
