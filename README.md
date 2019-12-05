@@ -20,7 +20,7 @@ Edit Postgres connection settings (Postgres user and db name) in `main.v`.
 
 ### Building
 
-V 0.1.17 is required.
+V 0.1.23 is required.
 
 ```bash
 git clone https://github.com/vlang/vorum
@@ -41,5 +41,5 @@ Everything, including HTML templates, is in one binary ~100 KB file `vorum`. Tha
 
 - no epoll/kqueue yet. So the performance is pretty bad until this is implemented: about 1k req/sec.
 
-- Right now only Postgres is supported. SQLite and MySQL backends will be supported in August.
+- Right now only Postgres is supported. SQLite, MySQL, and MS SQL backends will be supported in the future.
 
