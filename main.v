@@ -28,7 +28,8 @@ fn main() {
 }
 
 pub fn (app mut App) init() {
-	app.db = pg.connect(pg.Config{host:'127.0.0.1', dbname:db_name, user:db_user})
+	db := pg.connect(pg.Config{host:'127.0.0.1', dbname:db_name, user:db_user}) or { panic(err) }
+	app.db = db
 	app.cur_user = User{}
 }
 
