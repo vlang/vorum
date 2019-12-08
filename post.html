@@ -2,19 +2,21 @@
 
 <h1>@post.title</h1>
 
+<!--
 <div class="sep" style="border:0"></div>
+-->
 
 <div class="center">
 
 @for comment in comments
 	<div class=comment>
 		<b>@comment.name</b> <i>@comment.time</i>
-		<div class=text>@comment.text</div>
+		<div class=text>@comment.filtered_text()</div>
 	</div>
 @end
 
 
-@if show_form
+@if app.logged_in
 	<form method="post" action="/comment/@post.id/title">
 		<textarea name="text" required minlength=3
 			placeholder="Write your comment here"></textarea>
@@ -27,7 +29,7 @@
 
 <div class="sep" style="border:0;"></div>
 
-@if !show_form
+@if !app.logged_in
 
 <div class="center">
 	<a href="https://github.com/login/oauth/authorize?response_type=code&client_id=@CLIENT_ID"
@@ -43,7 +45,8 @@
 	<br>
 
 	<center style="color:#777">
-		Powered by <a target=_blank href="https://github.com/vlang/vorum">vorum</a>,
+		Powered by <a target=_blank
+		href="https://github.com/vlang/vorum">Vorum</a>,
 		open-source blogging/forum software written in V
 	</center>
 

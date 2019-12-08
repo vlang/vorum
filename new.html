@@ -2,7 +2,7 @@
 
 <div class='sep' style='border:0'></div>
 
-@if logged_in
+@if app.logged_in
 <div class='center'>
 	<form action='/new_post' method='post'>
 		<input type=text required minlength=4 name=title placeholder='Title'>

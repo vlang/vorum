@@ -1,27 +1,47 @@
 @header
 
-<form action="/new/">
-    <input type="submit" value="New Topic" style="margin-top:30px"> 
-</form>
- 
-<br> 
-<br> 
+@if app.user.is_admin
+<script
+  src="https://code.jquery.com/jquery-2.2.4.min.js"
+  integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44="
+  crossorigin="anonymous"></script>
 
-@for post in posts 
+<script>
+function deletePost(post_id, title) {
+	if (!confirm('Are you sure you you want to delete post `' + title + '`?')) {
+		return
+	}
+	$.post('/deletepost/' + post_id)
+}
+</script>
+@end
+
+<form action="/new/">
+    <input type="submit" value="New Topic" style="margin-top:30px">
+</form>
+
+<br>
+<br>
+
+@for post in posts
 	<div class=post>
-		<a class=topic href="@post.url">@post.title</a> 
-		<img class=comment-img> 
-		<span class=nr-comments>@post.nr_comments</span> 
+		@if app.user.is_admin
+		[ <a>lock</a> | <a onclick="deletePost(@post.id, `@post.title`)">delete</a> ]
+		@end
+		<a class=topic href="@post.url">@post.title</a>
+		<img class=comment-img>
+		<span class=nr-comments>@post.nr_comments</span>
 		<span class=time>@post.time</span>
 	</div>
 @end
 
-<br> 
-<br> 
+<br>
+<br>
 
-<center style="color:#777">Powered by <a target=_blank href="https://github.com/vlang/vorum">vorum</a>, 
-open-source blogging/forum software written in V</center>  
+<center style="color:#777">Powered by <a target=_blank
+href="https://github.com/vlang/vorum">Vorum</a>,
+open-source blogging/forum software written in V</center>
 
-<br> 
-<br> 
+<br>
+<br>
 

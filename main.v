@@ -18,11 +18,13 @@ struct App {
 pub mut:
 	vweb vweb.Context // TODO embed
 	db pg.DB
-	cur_user User
+	user User
+	logged_in bool
 }
 
 pub fn (app mut App) reset() {
-	app.cur_user = User{}
+	app.user = User{}
+	app.logged_in = false
 }
 
 
@@ -35,12 +37,13 @@ fn main() {
 pub fn (app mut App) init() {
 	db := pg.connect(pg.Config{host:'127.0.0.1', dbname:db_name, user:db_user}) or { panic(err) }
 	app.db = db
-	app.cur_user = User{}
+	app.user = User{}
 }
 
 pub fn (app mut App) index() {
+	app.auth()
 	posts := app.find_all_posts()
-	println(123) // TODO remove, won't work without it
+	//println('number of posts=$posts.len')
 	$vweb.html()
 }
 
@@ -54,14 +57,12 @@ pub fn (app mut App) post() {
 	}
 	app.auth()
 	comments := app.find_comments(id)
-	show_form := app.cur_user.name != ''
 	$vweb.html()
 }
 
 // new post
 pub fn (app mut App) new() {
 	app.auth()
-	logged_in := app.cur_user.name != ''
 	$vweb.html()
 }
 
@@ -69,24 +70,20 @@ pub fn (app mut App) new() {
 pub fn (app mut App) new_post() {
 	app.auth()
 	mut name := ''
-	if app.cur_user.name != '' {
-		name = app.cur_user.name
+	if app.user.name != '' {
+		name = app.user.name
 	} else {
 		// not logged in
 		app.vweb.redirect('/new')
 		return
 	}
 	title := app.vweb.form['title']
-	mut text := app.vweb.form['text']
+	text := app.vweb.form['text']
 	if title == '' || text == '' {
 		app.vweb.redirect('/new')
 		return
 	}
-	// Allow admin to post HTML
-	if name != 'admin' {
-		text = text.replace('<', '&lt;')
-	}
-	app.insert_post(title, text)
+	app.insert_post(title.replace('<', '&lt;'), text)
 	app.vweb.redirect('/')
 }
 
@@ -94,31 +91,45 @@ pub fn (app mut App) new_post() {
 fn (app mut App) comment() {
 	app.auth()
 	post_id := app.get_post_id()
-	mut name := ''// b.form['name']
-	if app.cur_user.name != '' {
-		name = app.cur_user.name
-	}
-	else {
-		// not logged in
+	if !app.logged_in {
 		app.vweb.redirect('/')
 		return
 	}
-	mut comment_text := app.vweb.form['text']
-	if name == '' || comment_text == '' {
+	comment_text := app.vweb.form['text']
+	if comment_text == '' {
+		app.vweb.redirect('/')
 		return
 	}
-	// Allow admin to post HTML
-	if name != 'admin' {
-		comment_text = comment_text.replace('<', '&lt;')
-	}
-	app.insert_comment(post_id,  Comment{ text: comment_text, name: name })
+	app.insert_comment(post_id,  Comment{
+		text: comment_text
+		name: app.user.name
+	})
 	app.vweb.redirect('/post/$post_id')// so that refreshing a page won't do a post again
+}
+
+pub fn (app mut App) deletepost() {
+	app.auth()
+	if !app.user.is_admin {
+		app.vweb.redirect('/')
+		return
+	}
+	post_id := "1"
+	db := app.db
+	//db.update Post set nr_comments=10//  is_deleted = true where id = post_id
+	db.update Post set is_deleted = true where id == post_id
+	println('deleted post $post_id')
+}
+
+pub fn (app mut App) logoff() {
+	app.vweb.set_cookie('id', '')
+	app.vweb.set_cookie('q', '')
+	app.vweb.redirect('/')
 }
 
 
 // "/post/:id/:title"
 pub fn (app &App) get_post_id() int {
-	return app.vweb.req.url[4..app.vweb.req.url.len].find_between('/', '/').int()
+	return app.vweb.req.url[4..].find_between('/', '/').int()
 }
 
 

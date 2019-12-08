@@ -1,14 +1,19 @@
 module main
 
 import (
-	rand 
+	rand
 	http
 	json
-) 
+	os
+)
 
 const (
-	CLIENT_ID     = ''
-	CLIENT_SECRET = ''
+	//CLIENT_ID     = ''
+	//CLIENT_SECRET = ''
+	//oauth_client_id = os.getenv('VORUM_OAUTH_CLIENT_ID')
+	//oauth_client_secret = os.getenv('VORUM_OAUTH_SECRET')
+	CLIENT_ID = os.getenv('VORUM_OAUTH_CLIENT_ID')
+	CLIENT_SECRET = os.getenv('VORUM_OAUTH_SECRET')
 )
 
 struct GitHubUser {
@@ -25,7 +30,7 @@ fn random_string(len int) string {
 		idx := rand.next(RANDOM.len)
 		buf[i] = RANDOM[idx]
 	}
-	return string(buf) 
+	return string(buf)
 }
 
 fn (app mut App) oauth_cb() {
@@ -35,9 +40,9 @@ fn (app mut App) oauth_cb() {
 		return
 	}
 	d := 'client_id=$CLIENT_ID&client_secret=$CLIENT_SECRET&code=$code'
-	resp := http.post('https://github.com/login/oauth/access_token', d) or { return } 
+	resp := http.post('https://github.com/login/oauth/access_token', d) or { return }
 	token := resp.text.find_between('access_token=', '&')
-	mut req := http.new_request('GET', 'https://api.github.com/user?access_token=$token', '') or { return } 
+	mut req := http.new_request('GET', 'https://api.github.com/user?access_token=$token', '') or { return }
 	req.add_header('User-Agent', 'V http client')
 	user_js := req.do() or { return }
 	gh_user := json.decode(GitHubUser, user_js.text) or {
@@ -60,9 +65,15 @@ fn (app mut App) auth() {
 	id := id_str.int()
 	random_id := app.vweb.get_cookie('q') or { return }
 	if id != 0 {
-		cur_user := app.retrieve_user(id, random_id) or {
+		user := app.retrieve_user(id, random_id) or {
+			println('user not found (id=$id, random_id=$random_id)')
 			return
 		}
-		app.cur_user = cur_user
+		if user.is_banned {
+			app.vweb.text('You account was banned.')
+			return
+		}
+		app.user = user
+		app.logged_in = true
 	}
 }
