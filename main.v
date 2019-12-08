@@ -21,6 +21,11 @@ pub mut:
 	cur_user User
 }
 
+pub fn (app mut App) reset() {
+	app.cur_user = User{}
+}
+
+
 fn main() {
 	println('Running vorum on http://localhost:$port')
 	mut app := App{}
@@ -41,32 +46,35 @@ pub fn (app mut App) index() {
 
 // TODO ['/post/:id/:title']
 // TODO `fn (app App) post(id int)`
-pub fn (app &App) post() {
+pub fn (app mut App) post() {
 	id := app.get_post_id()
 	post := app.retrieve_post(id) or {
 		app.vweb.redirect('/')
 		return
 	}
+	app.auth()
 	comments := app.find_comments(id)
-	show_form := true
+	show_form := app.cur_user.name != ''
 	$vweb.html()
 }
 
 // new post
-pub fn (app &App) new() {
+pub fn (app mut App) new() {
+	app.auth()
+	logged_in := app.cur_user.name != ''
 	$vweb.html()
 }
 
 // [post]
-pub fn (app & App) new_post() {
+pub fn (app mut App) new_post() {
+	app.auth()
 	mut name := ''
 	if app.cur_user.name != '' {
 		name = app.cur_user.name
-	}
-	else {
+	} else {
 		// not logged in
-		//return
-		name = 'admin' // TODO remove
+		app.vweb.redirect('/new')
+		return
 	}
 	title := app.vweb.form['title']
 	mut text := app.vweb.form['text']
@@ -83,7 +91,8 @@ pub fn (app & App) new_post() {
 }
 
 // [post]
-fn (app & App) comment() {
+fn (app mut App) comment() {
+	app.auth()
 	post_id := app.get_post_id()
 	mut name := ''// b.form['name']
 	if app.cur_user.name != '' {
@@ -91,8 +100,8 @@ fn (app & App) comment() {
 	}
 	else {
 		// not logged in
-		//return
-		name = 'admin' // TODO remove
+		app.vweb.redirect('/')
+		return
 	}
 	mut comment_text := app.vweb.form['text']
 	if name == '' || comment_text == '' {
