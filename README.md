@@ -1,4 +1,4 @@
-# vorum
+# Vorum
 
 Open-source blogging/forum software written in [V](https://github.com/vlang/v). 
 
@@ -39,11 +39,11 @@ Everything, including HTML templates, is in one binary ~100 KB file `vorum`. Tha
 
 Right now only GitHub authentication is supported. (Traditional registration via email will be implemented soon.)
 
-Create a GitHub oauth app (GitHub Settings => OAuth Apps).
+- Create a GitHub oauth app (GitHub Settings => OAuth Apps).
 
-Set Authorization callback URL to https://your-forum-url.com/oauth_cb.
+- Set Authorization callback URL to https://your-forum-url.com/oauth_cb.
 
-Copy Client ID and Client Secret, and update the values in `oauth.v` or set VORUM_OAUTH_CLIENT_ID and VORUM_OAUTH_SECRET env vars.
+- Copy Client ID and Client Secret, and update the values in `oauth.v` or set `VORUM_OAUTH_CLIENT_ID` and `VORUM_OAUTH_SECRET` env vars.
 
 
 
