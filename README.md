@@ -35,6 +35,19 @@ Running vorum on http://localhost:8092...
 
 Everything, including HTML templates, is in one binary ~100 KB file `vorum`. That's all you need to deploy.
 
+### Setting up GitHub authentication
+
+Right now only GitHub authentication is supported. (Traditional registration via email will be implemented soon.)
+
+Create a GitHub oauth app (GitHub Settings => OAuth Apps).
+
+Set Authorization callback URL to https://your-forum-url.com/oauth_cb.
+
+Copy Client ID and Client Secret, and update the values in `oauth.v` or set VORUM_OAUTH_CLIENT_ID and VORUM_OAUTH_SECRET env vars.
+
+
+
+
 ### Known problems:
 
 - vweb HTML templates are precompiled and are part of the application's binary, so every time a template is changed, the entire app has to be rebuilt. This will be resolved in the future.
