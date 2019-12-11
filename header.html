@@ -131,7 +131,9 @@ max-width: 800px !important;
 @if app.logged_in
 		[ <b>@app.user.name</b> | <a href='/logoff'>log off</a> ]
 @else
-		[ <a>log in</a> ]
+		[ <a href=
+"https://github.com/login/oauth/authorize?response_type=code&client_id=@CLIENT_ID"
+>log in</a> ]
 
 @end
 	</div>

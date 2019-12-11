@@ -130,9 +130,11 @@ fn (c &Comment) filtered_text() string {
 		'<', '&lt;',
 		'[b]', '<b>',
 		'[/b]', '</b>',
+		'[code]', '<pre>',
+		'[/code]', '</pre>',
 	])
-	println('"$c.text"')
-	println('"$res"' + '\n\n')
+	//println('"$c.text"')
+	//println('"$res"' + '\n\n')
 	return res
 
 	// http links

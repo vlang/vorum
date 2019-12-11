@@ -50,6 +50,10 @@ fn (app mut App) oauth_cb() {
 		return
 	}
 	login := gh_user.login.replace(' ', '')
+	if login == '' {
+		app.vweb.text('Failed to authenticate')
+		return
+	}
 	mut random_id := random_string(20)
 	app.db.exec_param2('insert into users (name, random_id) values ($1, $2)', login, random_id)
 	// Fetch the new or already existing user and set cookies
