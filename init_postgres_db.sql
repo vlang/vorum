@@ -15,7 +15,8 @@ CREATE TABLE posts (
     "time" timestamp without time zone DEFAULT now(),
     nr_comments integer DEFAULT 0,
     is_blog boolean DEFAULT false,
-    last_reply timestamp without time zone DEFAULT now()
+    last_reply timestamp without time zone DEFAULT now(),
+    is_deleted boolean DEFAULT false
 );
 
 
