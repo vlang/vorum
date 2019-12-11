@@ -22,6 +22,7 @@ fn (app mut App) find_all_posts() []Post {
 	rows := app.db.exec('
 select id, title, extract(epoch from time)::int, extract(epoch from last_reply)::int, nr_comments
 from posts
+where is_deleted=false
 order by last_reply desc')
 println(rows.len)
 	if rows.len == 0 {
