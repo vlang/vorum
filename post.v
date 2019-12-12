@@ -37,7 +37,7 @@ println(rows.len)
 		mut t:= time.unix(row.vals[3].int()).clean()
 		// Only display "Dec 8", not "Dec 8 12:30"
 		if j := t.index(' ') {
-			i := t.last_index(' ')
+			i := t.last_index(' ') or { continue }
 			if i != j {
 				t = t[..i]
 			}
