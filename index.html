@@ -26,7 +26,10 @@ function deletePost(post_id, title) {
 @for post in posts
 	<div class=post>
 		@if app.user.is_admin
-		[ <a>lock</a> | <a onclick="deletePost(@post.id, `@post.title`)">delete</a> ]
+		[ <a>lock</a> | <a onclick="deletePost(@post.id, `@post.title`)">❌</a> ]
+		@end
+		@if post.is_locked
+			🔒
 		@end
 		<a class=topic href="@post.url">@post.title</a>
 		<img class=comment-img>

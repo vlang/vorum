@@ -17,11 +17,16 @@
 
 
 @if app.logged_in
-	<form method="post" action="/comment/@post.id/title">
-		<textarea name="text" required minlength=3
-			placeholder="Write your comment here"></textarea>
-		<input type="submit" value="Post">
-	</form>
+	@if post.is_locked
+		<br>
+		🔒 This discussion has been locked due to being resolved.
+	@else
+		<form method="post" action="/comment/@post.id/title">
+			<textarea name="text" required minlength=3
+				placeholder="Write your comment here"></textarea>
+			<input type="submit" value="Post">
+		</form>
+	@end
 @end
 
 

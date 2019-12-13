@@ -52,7 +52,7 @@ pub fn (app mut App) index() {
 pub fn (app mut App) post() {
 	id := app.get_post_id()
 	post := app.retrieve_post(id) or {
-		app.vweb.redirect('/')
+		app.vweb.text('Discussion not found.')
 		return
 	}
 	app.auth()
@@ -114,7 +114,7 @@ pub fn (app mut App) deletepost() {
 		app.vweb.redirect('/')
 		return
 	}
-	post_id := "1"
+	post_id := 1
 	db := app.db
 	//db.update Post set nr_comments=10//  is_deleted = true where id = post_id
 	db.update Post set is_deleted = true where id == post_id

@@ -3,13 +3,14 @@ module main
 import time
 
 struct Post {
-	id string
+	id int
 	title string
 	text string
-	url string
+	url string [orm:skip]
 	nr_comments int
-	time string
+	time string [orm:skip]
 	nr_views int
+	is_locked bool
 }
 
 struct Comment {
@@ -20,7 +21,8 @@ struct Comment {
 
 fn (app mut App) find_all_posts() []Post {
 	rows := app.db.exec('
-select id, title, extract(epoch from time)::int, extract(epoch from last_reply)::int, nr_comments
+select id, title, extract(epoch from time)::int,
+extract(epoch from last_reply)::int, nr_comments, is_locked
 from posts
 where is_deleted=false
 order by last_reply desc')
@@ -41,13 +43,15 @@ println(rows.len)
 			if i != j {
 				t = t[..i]
 			}
+
 		}
 		posts << Post {
-			id: id
+			id: id.int()
 			url : '/post/$id/' + clean_url(title)
 			title: title
 			nr_comments: row.vals[4].int()
 			time: t//time.unix(row.vals[3].int()).clean()
+			is_locked: row.vals[5] == 't'
 		}
 	}
 	return posts
@@ -69,18 +73,9 @@ fn (app App) find_comments(post_id int) []Comment {
 	return comments
 }
 
-fn (app App) retrieve_post(id int) ?Post {
-	rows := app.db.exec('select title, text, is_blog from posts where id=$id')
-	if rows.len == 0 {
-		return error('no posts')
-	}
-	row := rows[0]
-	post := Post {
-		title: row.vals[0]
-		text: row.vals[1]
-		id: id.str()
-	}
-	return post
+fn (app App) retrieve_post(post_id int) ?Post {
+	db := app.db
+	return db.select from Post where id == post_id limit 1
 }
 
 fn (app & App) insert_comment(post_id int, comment Comment) bool {
