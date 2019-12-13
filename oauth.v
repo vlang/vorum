@@ -67,7 +67,11 @@ fn (app mut App) oauth_cb() {
 fn (app mut App) auth() {
 	id_str := app.vweb.get_cookie('id') or { '0' }
 	id := id_str.int()
-	random_id := app.vweb.get_cookie('q') or { return }
+	random_id := app.vweb.get_cookie('q') or {
+		println('cant get random_id')
+		return
+	}
+	//println('auth() id=$id q=$random_id')
 	if id != 0 {
 		user := app.retrieve_user(id, random_id) or {
 			println('user not found (id=$id, random_id=$random_id)')

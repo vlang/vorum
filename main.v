@@ -97,7 +97,8 @@ fn (app mut App) comment() {
 	}
 	comment_text := app.vweb.form['text']
 	if comment_text == '' {
-		app.vweb.redirect('/')
+		//app.vweb.redirect('/')
+		app.vweb.text('Empty message.')
 		return
 	}
 	app.insert_comment(post_id,  Comment{
