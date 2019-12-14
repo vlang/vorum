@@ -1,10 +1,7 @@
 module main
 
 import (
-	net
-	http
 	vweb
-	os
 	pg
 )
 
@@ -55,6 +52,7 @@ pub fn (app mut App) post() {
 		app.vweb.text('Discussion not found.')
 		return
 	}
+	app.inc_post_views(id)
 	app.auth()
 	comments := app.find_comments(id)
 	$vweb.html()

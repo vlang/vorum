@@ -1,8 +1,6 @@
 //
 module main
 
-import pg
-
 struct User {
 mut:
 	id int

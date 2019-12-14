@@ -58,6 +58,13 @@ println(rows.len)
 
 }
 
+fn (app &App) inc_post_views(post_id int) bool {
+	app.db.exec('update posts set nr_views=nr_views+1 where id=$post_id')
+	return true
+	//db := app.db
+	//db.update Post set nr_views = nr_views + 1 where id = post_id
+}
+
 fn (app App) find_comments(post_id int) []Comment {
 	rows := app.db.exec('select * from comments where post_id=$post_id order by id')
 	mut comments := []Comment
