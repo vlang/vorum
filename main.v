@@ -27,8 +27,7 @@ pub fn (app mut App) reset() {
 
 fn main() {
 	println('Running vorum on http://localhost:$port')
-	mut app := App{}
-	vweb.run(mut app, port)
+	vweb.run<App>(port)
 }
 
 pub fn (app mut App) init() {
