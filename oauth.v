@@ -78,7 +78,7 @@ fn (app mut App) auth() {
 			return
 		}
 		if user.is_banned {
-			app.vweb.text('You account was banned.')
+			app.vweb.text('Your account was banned.')
 			return
 		}
 		app.user = user
