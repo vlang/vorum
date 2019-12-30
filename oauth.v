@@ -2,7 +2,7 @@ module main
 
 import (
 	rand
-	http
+	net.http
 	json
 	os
 )
