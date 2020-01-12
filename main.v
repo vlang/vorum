@@ -11,7 +11,7 @@ const (
 	db_user = 'alex'
 )
 
-struct App {
+pub struct App {
 pub mut:
 	vweb vweb.Context // TODO embed
 	db pg.DB
