@@ -22,8 +22,7 @@
 		🔒 This discussion has been locked due to being resolved.
 	@else
 		<form method="post" action="/comment/@post.id/title">
-			<textarea name="text" required minlength=3
-				placeholder="Write your comment here"></textarea>
+			<textarea name="text" required minlength=3 style="min-width:100%;max-width:100%" placeholder="Write your comment here"></textarea>
 			<input type="submit" value="Post">
 		</form>
 	@end
