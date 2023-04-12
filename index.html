@@ -1,4 +1,4 @@
-@header
+@include 'header.html'
 
 @if app.user.is_admin
 <script
@@ -9,9 +9,16 @@
 <script>
 function deletePost(post_id, title) {
 	if (!confirm('Are you sure you you want to delete post `' + title + '`?')) {
-		return
+		return;
 	}
-	$.post('/deletepost/' + post_id)
+
+	$.ajax({
+		url: '/posts/' + post_id,
+		type: 'DELETE',
+		success: function() {
+			location.reload();
+		}
+	});
 }
 </script>
 @end
@@ -34,7 +41,7 @@ function deletePost(post_id, title) {
 		<a class=topic href="@post.url">@post.title</a>
 		<img class=comment-img>
 		<span class=nr-comments>@post.nr_comments</span>
-		<span class=time>@post.time</span>
+		<span class=time>@post.time.relative()</span>
 	</div>
 @end
 

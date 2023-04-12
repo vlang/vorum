@@ -1,0 +1,7 @@
+.idea
+.vscode
+
+vorum
+
+logs/*
+!logs/.gitkeep

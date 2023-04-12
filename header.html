@@ -118,8 +118,6 @@ max-width: 800px !important;
 }
 </style>
 </head>
-
-
 <body>
 
 
@@ -132,9 +130,8 @@ max-width: 800px !important;
 		[ <b>@app.user.name</b> | <a href='/logoff'>log off</a> ]
 @else
 		[ <a href=
-"https://github.com/login/oauth/authorize?response_type=code&client_id=@CLIENT_ID"
+"https://github.com/login/oauth/authorize?response_type=code&client_id=@client_id"
 >log in</a> ]
 
 @end
 	</div>
-

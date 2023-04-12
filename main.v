@@ -1,133 +1,156 @@
 module main
 
-import (
-	vweb
-	pg
-)
+import vweb
+import db.pg
+import net.http
+import time
+import log
 
 const (
-	port = 8092
+	port    = 8092
 	db_name = 'vorum'
-	db_user = 'alex'
+	db_user = 'vorum'
 )
 
 pub struct App {
+	vweb.Context
 pub mut:
-	vweb vweb.Context // TODO embed
-	db pg.DB
-	user User
+	db        pg.DB
+	user      User
 	logged_in bool
+	logger    log.Log [vweb_global]
 }
-
-pub fn (app mut App) reset() {
-	app.user = User{}
-	app.logged_in = false
-}
-
 
 fn main() {
-	println('Running vorum on http://localhost:$port')
-	vweb.run<App>(port)
+	println('Running Vorum on http://localhost:${port}')
+
+	mut app := &App{}
+	app.init()
+
+	vweb.run(app, port)
 }
 
-pub fn (app mut App) init() {
-	db := pg.connect(pg.Config{host:'127.0.0.1', dbname:db_name, user:db_user}) or { panic(err) }
-	app.db = db
+pub fn (mut app App) init() {
+	app.db = pg.connect(pg.Config{ host: '127.0.0.1', dbname: db_name, user: db_user }) or {
+		panic(err)
+	}
 	app.user = User{}
+	app.setup_logger()
 }
 
-pub fn (app mut App) index() {
+pub fn (mut app App) index() vweb.Result {
 	app.auth()
-	posts := app.find_all_posts()
-	//println('number of posts=$posts.len')
-	$vweb.html()
-}
+	posts := app.find_all_posts() or {
+		app.warn(err.str())
 
-// TODO ['/post/:id/:title']
-// TODO `fn (app App) post(id int)`
-pub fn (app mut App) post() {
-	id := app.get_post_id()
-	post := app.retrieve_post(id) or {
-		app.vweb.text('Discussion not found.')
-		return
+		return app.ok('')
 	}
-	app.inc_post_views(id)
-	app.auth()
-	comments := app.find_comments(id)
-	$vweb.html()
+
+	return $vweb.html()
 }
 
-// new post
-pub fn (app mut App) new() {
+['/post/:id']
+pub fn (mut app App) post(id int) vweb.Result {
+	post := app.get_post(id) or { return app.text('Discussion not found.') }
+	app.inc_post_views(id) or { app.warn(err.str()) }
 	app.auth()
-	$vweb.html()
-}
 
-// [post]
-pub fn (app mut App) new_post() {
-	app.auth()
-	mut name := ''
-	if app.user.name != '' {
-		name = app.user.name
-	} else {
-		// not logged in
-		app.vweb.redirect('/new')
-		return
+	comments := app.find_comments(id) or {
+		app.warn(err.str())
+		[]Comment{}
 	}
-	title := app.vweb.form['title']
-	text := app.vweb.form['text']
+
+	return $vweb.html()
+}
+
+pub fn (mut app App) new() vweb.Result {
+	app.auth()
+
+	return $vweb.html()
+}
+
+[post]
+pub fn (mut app App) new_post() vweb.Result {
+	app.auth()
+
+	if app.user.name == '' {
+		// Not logged in
+		return app.redirect('/new')
+	}
+
+	title := app.form['title']
+	text := app.form['text']
 	if title == '' || text == '' {
-		app.vweb.redirect('/new')
-		return
+		return app.redirect('/new')
 	}
-	app.insert_post(title.replace('<', '&lt;'), text)
-	app.vweb.redirect('/')
+
+	app.insert_post(title.replace('<', '&lt;'), text) or { app.warn(err.str()) }
+
+	return app.redirect('/')
 }
 
-// [post]
-fn (app mut App) comment() {
+['/comment/:post_id'; post]
+fn (mut app App) comment(post_id int) vweb.Result {
 	app.auth()
-	post_id := app.get_post_id()
+
 	if !app.logged_in {
-		app.vweb.redirect('/')
-		return
+		return app.redirect('/')
 	}
-	comment_text := app.vweb.form['text']
+
+	comment_text := app.form['text']
 	if comment_text == '' {
-		//app.vweb.redirect('/')
-		app.vweb.text('Empty message.')
-		return
+		return app.text('Empty message.')
 	}
-	app.insert_comment(post_id,  Comment{
+
+	app.insert_comment(post_id, Comment{
 		text: comment_text
 		name: app.user.name
-	})
-	app.vweb.redirect('/post/$post_id')// so that refreshing a page won't do a post again
+	}) or { app.warn(err.str()) }
+
+	return app.redirect('/post/${post_id}') // so that refreshing a page won't do a post again
 }
 
-pub fn (app mut App) deletepost() {
+['/posts/:id'; delete]
+pub fn (mut app App) deletepost(post_id int) vweb.Result {
 	app.auth()
+
 	if !app.user.is_admin {
-		app.vweb.redirect('/')
-		return
+		return app.ok('')
 	}
-	post_id := 1
-	db := app.db
-	//db.update Post set nr_comments=10//  is_deleted = true where id = post_id
-	db.update Post set is_deleted = true where id == post_id
-	println('deleted post $post_id')
+
+	sql app.db {
+		delete from Post where id == post_id
+	} or { app.warn(err.str()) }
+
+	return app.ok('')
 }
 
-pub fn (app mut App) logoff() {
-	app.vweb.set_cookie('id', '')
-	app.vweb.set_cookie('q', '')
-	app.vweb.redirect('/')
+pub fn (mut app App) logoff() vweb.Result {
+	app.set_cookie(http.Cookie{ name: 'id', value: '' })
+	return app.redirect('/')
 }
 
+fn (mut app App) setup_logger() {
+	app.logger.set_level(.debug)
 
-// "/post/:id/:title"
-pub fn (app &App) get_post_id() int {
-	return app.vweb.req.url[4..].find_between('/', '/').int()
+	app.logger.set_full_logpath('./logs/log_${time.now().ymmdd()}.log')
+	app.logger.log_to_console_too()
 }
 
+pub fn (mut app App) warn(msg string) {
+	app.logger.warn(msg)
 
+	app.logger.flush()
+}
+
+pub fn (mut app App) info(msg string) {
+	app.logger.info(msg)
+
+	app.logger.flush()
+}
+
+pub fn (mut app App) debug(msg string) {
+	app.logger.debug(msg)
+
+	app.logger.flush()
+}

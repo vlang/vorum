@@ -1,83 +1,65 @@
 module main
 
-import (
-	rand
-	net.http
-	json
-	os
-)
+import net.http
+import json
+import os
+import vweb
 
 const (
-	//CLIENT_ID     = ''
-	//CLIENT_SECRET = ''
-	//oauth_client_id = os.getenv('VORUM_OAUTH_CLIENT_ID')
-	//oauth_client_secret = os.getenv('VORUM_OAUTH_SECRET')
-	CLIENT_ID = os.getenv('VORUM_OAUTH_CLIENT_ID')
-	CLIENT_SECRET = os.getenv('VORUM_OAUTH_SECRET')
+	// oauth_client_id = os.getenv('VORUM_OAUTH_CLIENT_ID')
+	// oauth_client_secret = os.getenv('VORUM_OAUTH_SECRET')
+	client_id     = os.getenv('VORUM_OAUTH_CLIENT_ID')
+	client_secret = os.getenv('VORUM_OAUTH_SECRET')
 )
 
 struct GitHubUser {
 	login string
 }
 
-const (
-	RANDOM = 'qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM1234567890'
-)
-
-fn random_string(len int) string {
-	mut buf := [byte(0)].repeat(len)
-	for i := 0; i < len; i++ {
-		idx := rand.next(RANDOM.len)
-		buf[i] = RANDOM[idx]
-	}
-	return string(buf)
-}
-
-fn (app mut App) oauth_cb() {
-	code := app.vweb.req.url.all_after('code=')
-	println(code)
+fn (mut app App) oauth_cb() vweb.Result {
+	code := app.req.url.all_after('code=')
 	if code == '' {
-		return
+		return app.text('Code is required')
 	}
-	d := 'client_id=$CLIENT_ID&client_secret=$CLIENT_SECRET&code=$code'
-	resp := http.post('https://github.com/login/oauth/access_token', d) or { return }
-	token := resp.text.find_between('access_token=', '&')
-	user_js := http.get('https://api.github.com/user?access_token=$token') or { return }
-	//req.add_header('User-Agent', 'V http client')
-	gh_user := json.decode(GitHubUser, user_js.text) or {
-		println('cant decode')
-		return
+
+	request_params := 'client_id=${client_id}&client_secret=${client_secret}&code=${code}'
+	response := http.post('https://github.com/login/oauth/access_token', request_params) or {
+		return app.ok('')
 	}
+	token := response.body.find_between('access_token=', '&')
+	user_js := http.get('https://api.github.com/user?access_token=${token}') or {
+		return app.ok('')
+	}
+	gh_user := json.decode(GitHubUser, user_js.body) or { return app.text('Cant decode') }
+
 	login := gh_user.login.replace(' ', '')
 	if login == '' {
-		app.vweb.text('Failed to authenticate')
-		return
+		return app.text('Failed to authenticate')
 	}
-	mut random_id := random_string(20)
-	app.db.exec_param2('insert into users (name, random_id) values ($1, $2)', login, random_id)
+
+	app.db.exec_param('insert into users (name) values ($1, $2)', login) or { return app.ok('') }
+
 	// Fetch the new or already existing user and set cookies
-	user_id := app.db.q_int('select id from users where name=\'$login\' ')
-	random_id = app.db.q_string('select random_id from users where name=\'$login\' ')
-	app.vweb.set_cookie('id', user_id.str())
-	app.vweb.set_cookie('q', random_id)
-	app.vweb.redirect('/')
+	user_id := app.db.q_int('select id from users where name=\'${login}\' ') or {
+		return app.ok('')
+	}
+	app.set_cookie(http.Cookie{ name: 'id', value: user_id.str() })
+	app.redirect('/')
+
+	return app.ok('')
 }
 
-fn (app mut App) auth() {
-	id_str := app.vweb.get_cookie('id') or { '0' }
+fn (mut app App) auth() {
+	id_str := app.get_cookie('id') or { '0' }
 	id := id_str.int()
-	random_id := app.vweb.get_cookie('q') or {
-		println('cant get random_id')
-		return
-	}
-	//println('auth() id=$id q=$random_id')
+
 	if id != 0 {
-		user := app.retrieve_user(id, random_id) or {
-			println('user not found (id=$id, random_id=$random_id)')
+		user := app.get_user(id) or {
+			app.warn('User not found id=${id}')
 			return
 		}
 		if user.is_banned {
-			app.vweb.text('Your account was banned.')
+			app.text('Your account was banned.')
 			return
 		}
 		app.user = user

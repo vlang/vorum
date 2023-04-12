@@ -1,4 +1,4 @@
-@header
+@include 'header.html'
 
 <div class='sep' style='border:0'></div>
 
@@ -14,8 +14,9 @@
 @else
 
 <div class='center'>
-	<a href='https://github.com/login/oauth/authorize?response_type=code&client_id=@CLIENT_ID'
-	>Log in via GitHub to create a new topic</a>
+	<a href='https://github.com/login/oauth/authorize?response_type=code&client_id=@client_id'>
+		Log in via GitHub to create a new topic
+	</a>
 </div>
 
 @end
