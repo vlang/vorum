@@ -40,7 +40,7 @@ order by last_reply desc')!
 		return [
 			Post{
 				title: 'Hello world!'
-				text: 'Hello world from Vorum ;)'
+				text: 'Hello world from Vorum ;). This is the conntent for the text'
 			},
 		]
 	}

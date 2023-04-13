@@ -15,12 +15,16 @@
 
 
 textarea {
-width: 90%;
-height:100px;
-display: block;
-margin-top:10px;
-font-size:15px;
-padding:5px;
+  resize: none;
+  width: 100%;
+  height:100px;
+  display: block;
+  margin-top:10px;
+  font-size:15px;
+  padding:10px;
+  border-radius: 12px;
+  border: none;
+  background: rgb(239, 239, 239);
 }
 
 h1 {
@@ -30,77 +34,89 @@ h1 {
 
 
 input[type=submit] {
-padding: 5px;
-margin-top: 10px;
-font-size:100%;
+  padding: 5px;
+  padding-right: 10px;
+  padding-left: 10px;
+  margin-top: 10px;
+  font-size:100%;
 }
 #social {
-display:none;
+  display:none;
 }
 
 input[type=text] {
-margin-top:30px;
-width:50%;
-font-size:15px;
-padding:5px;
+  margin-top:30px;
+  width:100%;
+  font-size:15px;
+  padding:10px;
+  border-radius: 12px;
+  border: none;
+  background: rgb(239, 239, 239);
 }
-
+input[type=text]:focus {
+  outline: none;
+}
+textarea:focus {
+  outline: none;
+}
 .comment {
-color: #222;
-border-bottom: 1px solid #dfdfdf;
-display: block;
-padding:10px;
-font-size: 14px;
+  color: #222;
+  border-bottom: 1px solid #dfdfdf;
+  display: block;
+  padding:10px;
+  font-size: 14px;
 }
 i {
-float:right;
-color: #919191;
-font-size:13px;
+  float:right;
+  color: #919191;
+  font-size:13px;
 }
 
 b {
-color: #646464;
-font-size: 14px;
+  color: #646464;
+  font-size: 14px;
 }
 
 .text {
-margin-top:3px;
+  margin-top:3px;
 }
 
 .post {
-padding: 10px;
+  padding: 10px;
+  border-radius: 12px;
 }
 .post:hover {
 	background-color:#f7f7f7;
 	cursor: pointer;
+  border-radius: 12px;
 }
 .time {
-float: right;
+  float: right;
 }
 
 img.avatar {
-border-radius: 100%;
-width: 50px;
-float: left;
-margin-right: 10px;
+  border-radius: 100%;
+  width: 50px;
+  float: left;
+  margin-right: 10px;
 }
 .author {
-font-size: 13px;
-color: #646464;
-clear: both;
-    padding-left: 10px;
-    height: 50px;
-margin-bottom:10px;
+  font-size: 13px;
+  color: #646464;
+  clear: both;
+  padding-left: 10px;
+  height: 50px;
+  margin-bottom:10px;
 }
 
 .post-time {
-padding-top:5px;
+  padding-top:5px;
 }
 
 a.topic {
-    display: inline-block;
-color:#333;
-    width: 75%;
+  display: inline-block;
+  color:#333;
+  width: 75%;
 }
 .nav{
   align-items: center;
@@ -108,17 +124,21 @@ color:#333;
   display: flex;
 }
 img.comment-img, img.comment-img::after {
-    content:url(//vlang.io/img/comment.png);
-width: 17px;
-    position: relative;
-    top: 3px;
+  content:url(//vlang.io/img/comment.png);
+  width: 17px;
+  position: relative;
+  top: 3px;
 
 }
 .center {
-max-width: 800px !important;
+  max-width: 800px !important;
 }
 #log_off {
 	float:right;
+}
+.new_button{
+  border-radius: 12px;
+  border: 0;
 }
 </style>
 </head>
@@ -128,17 +148,16 @@ max-width: 800px !important;
 <div class="content">
 	<div class="center">
     <div class="nav">
-		<h1><a href=/>V Forum</a></h1>
+		  <h1><a href=/>V Forum</a></h1>
 
-	  <div id='log_off'>
-@if app.logged_in
-		  <b>@app.user.name</b> <a href='/logoff'>log off</a>
-@else
-		  <a href=
-"https://github.com/login/oauth/authorize?response_type=code&client_id=@client_id"
->log in</a>
-@end
-    </div>
+	    <div id='log_off'>
+        @if app.logged_in
+		      <b>@app.user.name</b> <a href='/logoff'>Log off</a>
+        @else
+		      <a href="https://github.com/login/oauth/authorize?response_type=code&client_id=@client_id">Log in</a>
+        @end
+      </div>
+
     </div>
 	</div>
 </div>
