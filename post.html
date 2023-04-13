@@ -1,4 +1,4 @@
-@header
+@include 'header.html'
 
 <h1>@post.title</h1>
 
@@ -10,7 +10,7 @@
 
 @for comment in comments
 	<div class=comment>
-		<b>@comment.name</b> <i>@comment.time</i>
+		<b>@comment.name</b> <i>@comment.time.relative()</i>
 		<div class=text>@comment.filtered_text()</div>
 	</div>
 @end
@@ -21,7 +21,7 @@
 		<br>
 		🔒 This discussion has been locked due to being resolved.
 	@else
-		<form method="post" action="/comment/@post.id/title">
+		<form method="post" action="/comment/@post.id">
 			<textarea name="text" required minlength=3
 				placeholder="Write your comment here"></textarea>
 			<input type="submit" value="Post">
@@ -37,8 +37,9 @@
 @if !app.logged_in
 
 <div class="center">
-	<a href="https://github.com/login/oauth/authorize?response_type=code&client_id=@CLIENT_ID"
-	>Log in via GitHub to comment</a>
+	<a href="https://github.com/login/oauth/authorize?response_type=code&client_id=@client_id">
+		Log in via GitHub to comment
+	</a>
 </div>
 
 @end
