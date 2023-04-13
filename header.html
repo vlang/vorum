@@ -102,7 +102,11 @@ a.topic {
 color:#333;
     width: 75%;
 }
-
+.nav{
+  align-items: center;
+  justify-content: space-between;
+  display: flex;
+}
 img.comment-img, img.comment-img::after {
     content:url(//vlang.io/img/comment.png);
 width: 17px;
@@ -123,15 +127,19 @@ max-width: 800px !important;
 
 <div class="content">
 	<div class="center">
+    <div class="nav">
 		<h1><a href=/>V Forum</a></h1>
 
-	<div id='log_off'>
+	  <div id='log_off'>
 @if app.logged_in
-		[ <b>@app.user.name</b> | <a href='/logoff'>log off</a> ]
+		  <b>@app.user.name</b> <a href='/logoff'>log off</a>
 @else
-		[ <a href=
+		  <a href=
 "https://github.com/login/oauth/authorize?response_type=code&client_id=@client_id"
->log in</a> ]
-
+>log in</a>
 @end
+    </div>
+    </div>
 	</div>
+</div>
+
