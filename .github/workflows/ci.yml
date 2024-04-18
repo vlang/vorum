@@ -1,0 +1,35 @@
+name: CI
+
+on:
+  workflow_dispatch:
+  push:
+  pull_request:
+
+jobs:
+  basic-checks:
+    runs-on: ubuntu-20.04
+    steps:
+
+      - name: Checkout V
+        uses: actions/checkout@v2
+        with:
+          repository: vlang/v
+
+      - name: Checkout vorum
+        uses: actions/checkout@v2
+        with:
+          path: vorum
+
+      - name: Build V
+        run: |
+          make
+          ./v symlink -githubci
+
+      - name: Build Vorum
+        run: v vorum
+
+      - name: Check Vorum code is VFMTed
+        run: v fmt -verify vorum/
+
+      - name: Vet Vorum
+        run: v vet vorum
