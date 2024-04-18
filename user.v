@@ -1,6 +1,6 @@
 module main
 
-[table: 'users']
+@[table: 'users']
 struct User {
 mut:
 	id        int
