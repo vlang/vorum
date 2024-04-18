@@ -5,12 +5,10 @@ import json
 import os
 import vweb
 
-const (
-	// oauth_client_id = os.getenv('VORUM_OAUTH_CLIENT_ID')
-	// oauth_client_secret = os.getenv('VORUM_OAUTH_SECRET')
-	client_id     = os.getenv('VORUM_OAUTH_CLIENT_ID')
-	client_secret = os.getenv('VORUM_OAUTH_SECRET')
-)
+// oauth_client_id = os.getenv('VORUM_OAUTH_CLIENT_ID')
+// oauth_client_secret = os.getenv('VORUM_OAUTH_SECRET')
+const client_id = os.getenv('VORUM_OAUTH_CLIENT_ID')
+const client_secret = os.getenv('VORUM_OAUTH_SECRET')
 
 struct GitHubUser {
 	login string

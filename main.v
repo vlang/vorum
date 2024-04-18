@@ -6,11 +6,9 @@ import net.http
 import time
 import log
 
-const (
-	port    = 8092
-	db_name = 'vorum'
-	db_user = 'vorum'
-)
+const port = 8092
+const db_name = 'vorum'
+const db_user = 'vorum'
 
 pub struct App {
 	vweb.Context
@@ -18,7 +16,7 @@ pub mut:
 	db        pg.DB
 	user      User
 	logged_in bool
-	logger    log.Log [vweb_global]
+	logger    log.Log @[vweb_global]
 }
 
 fn main() {
@@ -49,7 +47,7 @@ pub fn (mut app App) index() vweb.Result {
 	return $vweb.html()
 }
 
-['/post/:id']
+@['/post/:id']
 pub fn (mut app App) post(id int) vweb.Result {
 	post := app.get_post(id) or { return app.text('Discussion not found.') }
 	app.inc_post_views(id) or { app.warn(err.str()) }
@@ -69,7 +67,7 @@ pub fn (mut app App) new() vweb.Result {
 	return $vweb.html()
 }
 
-[post]
+@[post]
 pub fn (mut app App) new_post() vweb.Result {
 	app.auth()
 
@@ -89,7 +87,7 @@ pub fn (mut app App) new_post() vweb.Result {
 	return app.redirect('/')
 }
 
-['/comment/:post_id'; post]
+@['/comment/:post_id'; post]
 fn (mut app App) comment(post_id int) vweb.Result {
 	app.auth()
 
@@ -110,7 +108,7 @@ fn (mut app App) comment(post_id int) vweb.Result {
 	return app.redirect('/post/${post_id}') // so that refreshing a page won't do a post again
 }
 
-['/posts/:id'; delete]
+@['/posts/:id'; delete]
 pub fn (mut app App) deletepost(post_id int) vweb.Result {
 	app.auth()
 

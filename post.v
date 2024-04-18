@@ -2,14 +2,14 @@ module main
 
 import time
 
-[table: 'posts']
+@[table: 'posts']
 struct Post {
 	id          int
 	title       string
 	text        string
-	url         string    [skip]
+	url         string    @[skip]
 	nr_comments int
-	time        time.Time [orm: skip]
+	time        time.Time @[orm: skip]
 	last_reply  time.Time
 	nr_views    int
 	is_locked   bool
@@ -17,7 +17,7 @@ struct Post {
 	is_deleted  bool
 }
 
-[table: 'comments']
+@[table: 'comments']
 struct Comment {
 	id      int
 	post_id int
@@ -48,13 +48,16 @@ order by last_reply desc')!
 	for row in rows {
 		id := row.vals[0]
 		title := row.vals[1]
+		nr_comments := row.vals[4]
+		ts := row.vals[3]
+		is_locked := row.vals[5]
 		posts << Post{
-			id: id.int()
+			id: id or { '' }.int()
 			url: '/post/${id}'
-			title: title
-			nr_comments: row.vals[4].int()
-			time: time.unix(row.vals[3].int())
-			is_locked: row.vals[5] == 't'
+			title: title or { '' }
+			nr_comments: nr_comments or { '' }.int()
+			time: time.unix(ts or { '' }.int())
+			is_locked: is_locked or { '' } == 't'
 		}
 	}
 	return posts
