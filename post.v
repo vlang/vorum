@@ -7,7 +7,7 @@ struct Post {
 	id          int
 	title       string
 	text        string
-	url         string    @[skip]
+	url         string @[skip]
 	nr_comments int
 	time        time.Time @[orm: skip]
 	last_reply  time.Time
@@ -40,7 +40,7 @@ order by last_reply desc')!
 		return [
 			Post{
 				title: 'Hello world!'
-				text: 'Hello world from Vorum ;)'
+				text:  'Hello world from Vorum ;)'
 			},
 		]
 	}
@@ -52,12 +52,12 @@ order by last_reply desc')!
 		ts := row.vals[3]
 		is_locked := row.vals[5]
 		posts << Post{
-			id: id or { '' }.int()
-			url: '/post/${id}'
-			title: title or { '' }
+			id:          id or { '' }.int()
+			url:         '/post/${id}'
+			title:       title or { '' }
 			nr_comments: nr_comments or { '' }.int()
-			time: time.unix(ts or { '' }.int())
-			is_locked: is_locked or { '' } == 't'
+			time:        time.unix(ts or { '' }.int())
+			is_locked:   is_locked or { '' } == 't'
 		}
 	}
 	return posts
